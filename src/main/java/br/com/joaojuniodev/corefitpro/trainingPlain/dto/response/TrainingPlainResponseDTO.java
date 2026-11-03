@@ -11,5 +11,6 @@ public record TrainingPlainResponseDTO(
     TraineeResponseDTO trainee,
     String description,
     Boolean active,
-    String objective
+    String objective,
+    String goal
 ) {}

@@ -19,10 +19,14 @@ CREATE TABLE physical_assessments (
     left_thigh            DOUBLE PRECISION NULL,
     activity_level        VARCHAR(20)      NULL,
     notes                 VARCHAR(500)     NULL,
-    front_view_photo_url  VARCHAR(255)     NULL,
-    back_view_photo_url   VARCHAR(255)     NULL,
-    left_view_photo_url   VARCHAR(255)     NULL,
-    right_view_photo_url  VARCHAR(255)     NULL,
+    front_view_photo_key      VARCHAR(255) NULL,
+    front_view_photo_file_id  VARCHAR(255) NULL,
+    back_view_photo_key       VARCHAR(255) NULL,
+    back_view_photo_file_id   VARCHAR(255) NULL,
+    left_view_photo_key       VARCHAR(255) NULL,
+    left_view_photo_file_id   VARCHAR(255) NULL,
+    right_view_photo_key      VARCHAR(255) NULL,
+    right_view_photo_file_id  VARCHAR(255) NULL,
     CONSTRAINT pk_physical_assessments PRIMARY KEY (id),
     CONSTRAINT fk_physical_assessments_trainee FOREIGN KEY (trainee_id) REFERENCES trainees (id) ON DELETE CASCADE
 );

@@ -1,4 +1,4 @@
--- 16 alunos de teste (username/password iguais ao primeiro nome, em minúsculas),
+ç-- 16 alunos de teste (username/password iguais ao primeiro nome, em minúsculas),
 -- distribuídos entre os 4 personal trainers: Lucas(5), Fernanda(3), Rafael(7), Patrícia(1).
 -- avatar_url fica NULL propositalmente em alguns (Bruno e Renata) para simular
 -- o caso de aluno sem foto cadastrada (o front-end deve exibir um avatar padrão).
@@ -67,29 +67,30 @@ BEGIN
         isabela_user_id
     ) AND r.name = 'TRAINEE';
 
-    -- Trainees (com avatar_url; NULL para Bruno e Renata, simulando aluno sem foto)
-    INSERT INTO trainees (id, first_name, last_name, avatar_url, user_id, personal_trainer_id) VALUES
+    -- Trainees (avatar_key/avatar_file_id NULL para todos: nenhum tem avatar enviado ao B2 ainda,
+    -- o front-end deve exibir um avatar padrão nesse caso)
+    INSERT INTO trainees (id, first_name, last_name, avatar_key, avatar_file_id, user_id, personal_trainer_id) VALUES
         -- Lucas (5)
-        (gen_random_uuid(), 'Mateus',   '',          'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=300&auto=format&fit=crop&q=80', mateus_user_id,   lucas_pt_id),
-        (gen_random_uuid(), 'Beatriz',  'Lima',      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80', beatriz_user_id,  lucas_pt_id),
-        (gen_random_uuid(), 'Thiago',   'Ramos',     'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80', thiago_user_id,   lucas_pt_id),
-        (gen_random_uuid(), 'Larissa',  'Fontes',    'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop&q=80', larissa_user_id,  lucas_pt_id),
-        (gen_random_uuid(), 'Bruno',    'Cardoso',   NULL,                                                                                            bruno_user_id,    lucas_pt_id),
+        (gen_random_uuid(), 'Mateus',   '',          NULL, NULL, mateus_user_id,   lucas_pt_id),
+        (gen_random_uuid(), 'Beatriz',  'Lima',      NULL, NULL, beatriz_user_id,  lucas_pt_id),
+        (gen_random_uuid(), 'Thiago',   'Ramos',     NULL, NULL, thiago_user_id,   lucas_pt_id),
+        (gen_random_uuid(), 'Larissa',  'Fontes',    NULL, NULL, larissa_user_id,  lucas_pt_id),
+        (gen_random_uuid(), 'Bruno',    'Cardoso',   NULL, NULL,                                                                                            bruno_user_id,    lucas_pt_id),
 
         -- Fernanda (3)
-        (gen_random_uuid(), 'Gabriel',  'Santos',    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80', gabriel_user_id,  fernanda_pt_id),
-        (gen_random_uuid(), 'Camila',   'Rocha',     'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&auto=format&fit=crop&q=80', camila_user_id,   fernanda_pt_id),
-        (gen_random_uuid(), 'Amanda',   'Teixeira',  'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=300&auto=format&fit=crop&q=80', amanda_user_id,   fernanda_pt_id),
+        (gen_random_uuid(), 'Gabriel',  'Santos',    NULL, NULL, gabriel_user_id,  fernanda_pt_id),
+        (gen_random_uuid(), 'Camila',   'Rocha',     NULL, NULL, camila_user_id,   fernanda_pt_id),
+        (gen_random_uuid(), 'Amanda',   'Teixeira',  NULL, NULL, amanda_user_id,   fernanda_pt_id),
 
         -- Rafael (7)
-        (gen_random_uuid(), 'Diego',    'Alves',     'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80', diego_user_id,    rafael_pt_id),
-        (gen_random_uuid(), 'Juliana',  'Pereira',   'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80', juliana_user_id,  rafael_pt_id),
-        (gen_random_uuid(), 'Felipe',   'Nogueira',  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80', felipe_user_id,   rafael_pt_id),
-        (gen_random_uuid(), 'Carolina', 'Duarte',    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80', carolina_user_id, rafael_pt_id),
-        (gen_random_uuid(), 'Eduardo',  'Martins',   'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80', eduardo_user_id,  rafael_pt_id),
-        (gen_random_uuid(), 'Renata',   'Vieira',    NULL,                                                                                            renata_user_id,   rafael_pt_id),
-        (gen_random_uuid(), 'Vinícius', 'Barros',    'https://images.unsplash.com/photo-1463453091185-61582044d556?w=300&auto=format&fit=crop&q=80', vinicius_user_id, rafael_pt_id),
+        (gen_random_uuid(), 'Diego',    'Alves',     NULL, NULL, diego_user_id,    rafael_pt_id),
+        (gen_random_uuid(), 'Juliana',  'Pereira',   NULL, NULL, juliana_user_id,  rafael_pt_id),
+        (gen_random_uuid(), 'Felipe',   'Nogueira',  NULL, NULL, felipe_user_id,   rafael_pt_id),
+        (gen_random_uuid(), 'Carolina', 'Duarte',    NULL, NULL, carolina_user_id, rafael_pt_id),
+        (gen_random_uuid(), 'Eduardo',  'Martins',   NULL, NULL, eduardo_user_id,  rafael_pt_id),
+        (gen_random_uuid(), 'Renata',   'Vieira',    NULL, NULL,                                                                                            renata_user_id,   rafael_pt_id),
+        (gen_random_uuid(), 'Vinícius', 'Barros',    NULL, NULL, vinicius_user_id, rafael_pt_id),
 
         -- Patrícia (1)
-        (gen_random_uuid(), 'Isabela',  'Campos',    'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=300&auto=format&fit=crop&q=80', isabela_user_id,  patricia_pt_id);
+        (gen_random_uuid(), 'Isabela',  'Campos',    NULL, NULL, isabela_user_id,  patricia_pt_id);
 END $$;

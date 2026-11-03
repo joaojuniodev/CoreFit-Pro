@@ -74,8 +74,11 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/ws/**"
                 ).permitAll()
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/api/student/**").hasAuthority("TRAINEE")
+                .requestMatchers("/api/account/**").authenticated()
+                .requestMatchers("/api/**").hasAnyAuthority("PERSONAL", "ADMIN")
                 .requestMatchers("/users").denyAll()
+                .anyRequest().denyAll()
             )
             .cors(cors -> {})
             .build();

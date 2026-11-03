@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Component
+@org.springframework.scheduling.annotation.EnableScheduling
 public class CompletedTrainingResetScheduler {
 
     private final TrainingItemService trainingItemService;
@@ -13,7 +14,8 @@ public class CompletedTrainingResetScheduler {
         this.trainingItemService = trainingItemService;
     }
 
-    @Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 0 0 * * MON", zone = "America/Sao_Paulo")
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
     public void resetsWorkoutsMarkedAsCompletedFotTheWeek() {
         trainingItemService.resetCompletedWorkouts();
     }

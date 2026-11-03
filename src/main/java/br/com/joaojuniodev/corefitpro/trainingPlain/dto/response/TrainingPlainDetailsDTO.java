@@ -13,5 +13,6 @@ public record TrainingPlainDetailsDTO(
     TraineeResponseDTO trainee,
     String description,
     String objective,
+    String goal,
     List<TrainingItemResponseDTO> trainings
 ) {}

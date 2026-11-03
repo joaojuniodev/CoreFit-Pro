@@ -13,6 +13,9 @@ import br.com.joaojuniodev.corefitpro.muscleGroup.repository.MuscleGroupReposito
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class ExerciseService {
     private static final Logger logger = LoggerFactory.getLogger(ExerciseService.class.getName());
 
@@ -56,6 +60,7 @@ public class ExerciseService {
         return mapper.toResponse(entity);
     }
 
+    @Transactional
     public StoredFileResponse addFile(UUID exerciseId, MultipartFile file, String folder) {
         logger.info("Adding video/image for Exercise");
 
@@ -76,11 +81,13 @@ public class ExerciseService {
         return storedResponse;
     }
 
+    @Transactional
     public ExerciseResponseDTO create(ExerciseRequestDTO exercise, MultipartFile photo) {
         logger.info("Creating new Exercise");
 
         var entity = mapper.toEntity(exercise);
         entity.setSystem(false);
+        updateVideo(entity, exercise.videoUrl());
 
         List<MuscleGroup> muscleGroups = muscleGroupRepository.findAllById(exercise.muscleGroupsId());
         entity.setMuscleGroups(new HashSet<>(muscleGroups));
@@ -96,6 +103,7 @@ public class ExerciseService {
         return mapper.toResponse(exerciseCreated);
     }
 
+    @Transactional
     public ExerciseResponseDTO update(ExerciseRequestDTO exercise, MultipartFile photo) {
         logger.info("Updating Exercise");
 
@@ -106,6 +114,7 @@ public class ExerciseService {
             throw new IllegalArgumentException("This exercise belongs to the system; it cannot be changed.");
 
         entity.setName(exercise.name());
+        updateVideo(entity, exercise.videoUrl());
 
         List<MuscleGroup> muscleGroups = muscleGroupRepository.findAllById(exercise.muscleGroupsId());
         entity.setMuscleGroups(new HashSet<>(muscleGroups));
@@ -121,19 +130,40 @@ public class ExerciseService {
         return mapper.toResponse(exerciseUpdated);
     }
 
+    @Transactional
     public ExerciseResponseDTO toggleFavorite(UUID id, Boolean favorite) {
         logger.info("Updating favorite Exercise by Id");
 
         var entity = exerciseRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Not found this Exercise Id: " + id));
 
-        if (!entity.getSystem()) {
+        if (!Boolean.TRUE.equals(entity.getSystem())) {
             entity.setFavorite(Boolean.TRUE.equals(favorite));
         }
 
-        return mapper.toResponse(entity);
+        return mapper.toResponse(exerciseRepository.save(entity));
     }
 
+    private void updateVideo(br.com.joaojuniodev.corefitpro.exercise.model.Exercise entity, String videoUrl) {
+        if (videoUrl == null || videoUrl.isBlank()) {
+            entity.setVideoKey(null);
+            entity.setVideoFileId(null);
+            return;
+        }
+        java.net.URI uri;
+        try { uri = java.net.URI.create(videoUrl.trim()); }
+        catch (IllegalArgumentException ex) { throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe uma URL válida para o vídeo."); }
+        if (uri.getHost() == null || !("https".equalsIgnoreCase(uri.getScheme()) || "http".equalsIgnoreCase(uri.getScheme()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O vídeo deve usar um endereço HTTP ou HTTPS.");
+        }
+        // A prévia de um arquivo armazenado é temporária; preserve a chave original na edição.
+        if (entity.getVideoFileId() != null && uri.getRawQuery() != null &&
+            uri.getRawQuery().contains("X-Amz-Signature=")) return;
+        entity.setVideoKey(videoUrl.trim());
+        entity.setVideoFileId(null);
+    }
+
+    @Transactional
     public void delete(UUID id) {
         logger.info("Deleting Exercise");
 

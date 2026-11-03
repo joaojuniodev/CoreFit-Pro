@@ -74,17 +74,29 @@ public class PhysicalAssessment {
     @Column
     private String notes;
 
-    @Column(name = "front_view_photo_url")
-    private String frontViewPhotoUrl;
+    @Column(name = "front_view_photo_key")
+    private String frontViewPhotoKey;
 
-    @Column(name = "back_view_photo_url")
-    private String backViewPhotoUrl;
+    @Column(name = "front_view_photo_file_id")
+    private String frontViewPhotoFileId;
 
-    @Column(name = "left_view_photo_url")
-    private String leftViewPhotoUrl;
+    @Column(name = "back_view_photo_key")
+    private String backViewPhotoKey;
 
-    @Column(name = "right_view_photo_url")
-    private String rightViewPhotoUrl;
+    @Column(name = "back_view_photo_file_id")
+    private String backViewPhotoFileId;
+
+    @Column(name = "left_view_photo_key")
+    private String leftViewPhotoKey;
+
+    @Column(name = "left_view_photo_file_id")
+    private String leftViewPhotoFileId;
+
+    @Column(name = "right_view_photo_key")
+    private String rightViewPhotoKey;
+
+    @Column(name = "right_view_photo_file_id")
+    private String rightViewPhotoFileId;
 
     public PhysicalAssessment() {}
 
@@ -248,36 +260,68 @@ public class PhysicalAssessment {
         this.notes = notes;
     }
 
-    public String getFrontViewPhotoUrl() {
-        return frontViewPhotoUrl;
+    public String getFrontViewPhotoKey() {
+        return frontViewPhotoKey;
     }
 
-    public void setFrontViewPhotoUrl(String frontViewPhotoUrl) {
-        this.frontViewPhotoUrl = frontViewPhotoUrl;
+    public void setFrontViewPhotoKey(String frontViewPhotoKey) {
+        this.frontViewPhotoKey = frontViewPhotoKey;
     }
 
-    public String getBackViewPhotoUrl() {
-        return backViewPhotoUrl;
+    public String getFrontViewPhotoFileId() {
+        return frontViewPhotoFileId;
     }
 
-    public void setBackViewPhotoUrl(String backViewPhotoUrl) {
-        this.backViewPhotoUrl = backViewPhotoUrl;
+    public void setFrontViewPhotoFileId(String frontViewPhotoFileId) {
+        this.frontViewPhotoFileId = frontViewPhotoFileId;
     }
 
-    public String getLeftViewPhotoUrl() {
-        return leftViewPhotoUrl;
+    public String getBackViewPhotoKey() {
+        return backViewPhotoKey;
     }
 
-    public void setLeftViewPhotoUrl(String leftViewPhotoUrl) {
-        this.leftViewPhotoUrl = leftViewPhotoUrl;
+    public void setBackViewPhotoKey(String backViewPhotoKey) {
+        this.backViewPhotoKey = backViewPhotoKey;
     }
 
-    public String getRightViewPhotoUrl() {
-        return rightViewPhotoUrl;
+    public String getBackViewPhotoFileId() {
+        return backViewPhotoFileId;
     }
 
-    public void setRightViewPhotoUrl(String rightViewPhotoUrl) {
-        this.rightViewPhotoUrl = rightViewPhotoUrl;
+    public void setBackViewPhotoFileId(String backViewPhotoFileId) {
+        this.backViewPhotoFileId = backViewPhotoFileId;
+    }
+
+    public String getLeftViewPhotoKey() {
+        return leftViewPhotoKey;
+    }
+
+    public void setLeftViewPhotoKey(String leftViewPhotoKey) {
+        this.leftViewPhotoKey = leftViewPhotoKey;
+    }
+
+    public String getLeftViewPhotoFileId() {
+        return leftViewPhotoFileId;
+    }
+
+    public void setLeftViewPhotoFileId(String leftViewPhotoFileId) {
+        this.leftViewPhotoFileId = leftViewPhotoFileId;
+    }
+
+    public String getRightViewPhotoKey() {
+        return rightViewPhotoKey;
+    }
+
+    public void setRightViewPhotoKey(String rightViewPhotoKey) {
+        this.rightViewPhotoKey = rightViewPhotoKey;
+    }
+
+    public String getRightViewPhotoFileId() {
+        return rightViewPhotoFileId;
+    }
+
+    public void setRightViewPhotoFileId(String rightViewPhotoFileId) {
+        this.rightViewPhotoFileId = rightViewPhotoFileId;
     }
 
     @Override

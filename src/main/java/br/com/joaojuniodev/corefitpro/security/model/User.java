@@ -83,8 +83,17 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return Boolean.TRUE.equals(enabled);
     }
+
+    @Override
+    public boolean isAccountNonExpired() { return Boolean.TRUE.equals(accountNonExpired); }
+
+    @Override
+    public boolean isAccountNonLocked() { return Boolean.TRUE.equals(accountNonLocked); }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return Boolean.TRUE.equals(credentialsNonExpired); }
 
     public UUID getId() {
         return id;

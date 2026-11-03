@@ -5,6 +5,7 @@ import br.com.joaojuniodev.corefitpro.trainee.model.Trainee;
 import br.com.joaojuniodev.corefitpro.trainingItem.model.TrainingItem;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,9 +22,14 @@ public class TrainingPlain {
     @JoinColumn(name = "personal_trainer_id")
     private PersonalTrainer personalTrainer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "trainee_id")
     private Trainee trainee;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
     @Column
     private String description;

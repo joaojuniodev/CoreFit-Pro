@@ -1,7 +1,6 @@
 package br.com.joaojuniodev.corefitpro.physicalAssessment.dto.request;
 
 import br.com.joaojuniodev.corefitpro.physicalAssessment.enums.ActivityLevel;
-import br.com.joaojuniodev.corefitpro.trainee.dto.response.TraineeSummaryDTO;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -26,8 +25,5 @@ public record PhysicalAssessmentRequestDTO(
     Double rightThigh,
     Double leftThigh,
     ActivityLevel activityLevel,
-    String notes, String frontViewPhotoUrl,
-    String backViewPhotoUrl,
-    String leftViewPhotoUrl,
-    String rightViewPhotoUrl
+    String notes
 ) {}

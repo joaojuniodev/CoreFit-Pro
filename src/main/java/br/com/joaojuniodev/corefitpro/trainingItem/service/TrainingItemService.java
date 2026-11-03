@@ -74,13 +74,15 @@ public class TrainingItemService {
         return trainingItemMapper.toResponse(entity);
     }
 
+    @Transactional
     public TrainingItemResponseDTO markCompletedTraining(UUID id) {
         logger.info("Marking Training Item this Completed");
 
         var entity = trainingItemRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Not found this Training Item Id: " + id));
         entity.setCompleted(true);
-        return trainingItemMapper.toResponse(entity);
+        entity.setDateTime(java.time.LocalDateTime.now(java.time.ZoneId.of("America/Sao_Paulo")));
+        return trainingItemMapper.toResponse(trainingItemRepository.save(entity));
     }
 
     public void delete(UUID id) {
@@ -92,9 +94,12 @@ public class TrainingItemService {
     }
 
     @Transactional
-    protected void resetCompletedWorkouts() {
+    public void resetCompletedWorkouts() {
         List<TrainingItem> trainingItems = trainingItemRepository.findAll();
-        trainingItems.forEach(this::reset);
+        var monday = java.time.LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo"))
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        trainingItems.stream().filter(item -> Boolean.TRUE.equals(item.getCompleted()) &&
+            (item.getDateTime() == null || item.getDateTime().toLocalDate().isBefore(monday))).forEach(this::reset);
 
         logger.info("All workouts marked as incomplete");
     }

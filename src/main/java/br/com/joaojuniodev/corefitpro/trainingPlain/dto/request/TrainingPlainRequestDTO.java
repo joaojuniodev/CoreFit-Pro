@@ -7,5 +7,6 @@ public record TrainingPlainRequestDTO(
     String description,
     String objective,
     UUID personalTrainerId,
-    UUID traineeId
+    UUID traineeId,
+    String goal
 ) {}

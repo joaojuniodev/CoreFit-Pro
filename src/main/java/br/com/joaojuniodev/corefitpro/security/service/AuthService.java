@@ -1,5 +1,6 @@
 package br.com.joaojuniodev.corefitpro.security.service;
 
+import br.com.joaojuniodev.corefitpro.mapper.user.UserMapper;
 import br.com.joaojuniodev.corefitpro.security.dto.AccountCredentialsDTO;
 import br.com.joaojuniodev.corefitpro.security.dto.TokenDTO;
 import br.com.joaojuniodev.corefitpro.security.dto.UserResponseDTO;
@@ -34,6 +35,9 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserMapper mapper;
+
     public TokenDTO signIn(AccountCredentialsDTO credentials) {
         log.info("Performing the login");
 
@@ -62,16 +66,6 @@ public class AuthService {
         );
     }
 
-    public UserResponseDTO register(AccountCredentialsDTO credentials) {
-        log.info("Registering new User");
-
-        var user = buildUser(credentials);
-        user.setRoles(List.of());
-
-        User savedUser = repository.save(user);
-        return toResponse(savedUser);
-    }
-
     private User buildUser(AccountCredentialsDTO credentials) {
         User user = new User();
         user.setUsername(credentials.getUsername());
@@ -82,10 +76,6 @@ public class AuthService {
         user.setAccountNonExpired(true);
         user.setCredentialsNonExpired(true);
         return user;
-    }
-
-    private UserResponseDTO toResponse(User user) {
-        return new UserResponseDTO(user.getId(), user.getUsername(), user.getPassword(), user.getEnabled());
     }
 
     private String generatedPassword(String passwordString) {

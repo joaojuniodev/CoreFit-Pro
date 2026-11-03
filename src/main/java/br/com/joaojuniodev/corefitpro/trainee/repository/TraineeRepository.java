@@ -19,5 +19,8 @@ public interface TraineeRepository extends JpaRepository<Trainee, UUID> {
     @EntityGraph(attributePaths = {"physicalAssessments"})
     Optional<Trainee> findById(UUID id);
 
+    @EntityGraph(attributePaths = {"physicalAssessments", "user", "personalTrainer"})
+    Optional<Trainee> findByUserUsername(String username);
+
     Long countByUserEnabledTrueAndPersonalTrainerId(UUID personalTrainerId);
 }

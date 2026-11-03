@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingService.class.getName());
 
@@ -97,6 +98,18 @@ public class TrainingService {
 
         var entity = trainingRepository.findById(training.id())
             .orElseThrow(() -> new NotFoundException("Not found this Exercise Id: " + training.id()));
+        if (training.exerciseItems() == null || training.exerciseItems().isEmpty() ||
+            training.muscleGroupsId() == null || training.muscleGroupsId().isEmpty()) {
+            throw new IsEmptyObjectException("Adicione exercícios e agrupamentos musculares ao treinamento.");
+        }
+        var currentIds = entity.getExerciseItems().stream().map(ExerciseItem::getId).collect(java.util.stream.Collectors.toSet());
+        var requestedIds = training.exerciseItems().stream().map(ExerciseItemRequestDTO::id)
+            .filter(java.util.Objects::nonNull).collect(java.util.stream.Collectors.toSet());
+        if (!currentIds.containsAll(requestedIds)) {
+            throw new IsEmptyObjectException("Um dos exercícios selecionados não pertence a este treinamento.");
+        }
+        var removed = entity.getExerciseItems().stream().filter(item -> !requestedIds.contains(item.getId())).toList();
+        exerciseItemRepository.deleteAll(removed);
         entity.setTitle(training.title());
         entity.setDescription(training.description());
 
@@ -119,6 +132,7 @@ public class TrainingService {
         return trainingMapper.toResponse(trainingUpdated);
     }
 
+    @Transactional
     public void delete(UUID id) {
         logger.info("Deleting Training");
 

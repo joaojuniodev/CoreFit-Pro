@@ -11,6 +11,7 @@ import br.com.joaojuniodev.corefitpro.trainingPlain.dto.request.TrainingPlainReq
 import br.com.joaojuniodev.corefitpro.trainingPlain.dto.response.TrainingPlainDetailsDTO;
 import br.com.joaojuniodev.corefitpro.trainingPlain.dto.response.TrainingPlainResponseDTO;
 import br.com.joaojuniodev.corefitpro.trainingPlain.model.TrainingPlain;
+import br.com.joaojuniodev.corefitpro.trainingItem.model.TrainingItem;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class TrainingPlainMapper implements ObjectMapper<TrainingPlain, Training
         trainingPlain.setDescription(request.description());
         trainingPlain.setActive(true);
         trainingPlain.setObjective(request.objective());
+        trainingPlain.setGoal(request.goal());
         trainingPlain.setPersonalTrainer(personalTrainer);
         trainingPlain.setTrainee(trainee);
         return trainingPlain;
@@ -57,19 +59,25 @@ public class TrainingPlainMapper implements ObjectMapper<TrainingPlain, Training
             traineeMapper.toResponse(entity.getTrainee()),
             entity.getDescription(),
             entity.getActive(),
-            entity.getObjective()
+            entity.getObjective(),
+            entity.getGoal()
         );
     }
 
     public TrainingPlainDetailsDTO toDetails(TrainingPlain entity) {
+        return toDetails(entity, entity.getTrainings());
+    }
+
+    public TrainingPlainDetailsDTO toDetails(TrainingPlain entity, List<TrainingItem> trainingItems) {
         return new TrainingPlainDetailsDTO(
             entity.getId(),
             personalTrainerMapper.toSummary(entity.getPersonalTrainer()),
             traineeMapper.toResponse(entity.getTrainee()),
             entity.getDescription(),
             entity.getObjective(),
-            entity.getTrainings() != null
-                ? entity.getTrainings().stream().map(trainingItemMapper::toResponse).toList()
+            entity.getGoal(),
+            trainingItems != null
+                ? trainingItems.stream().map(trainingItemMapper::toResponse).toList()
                 : List.of()
         );
     }

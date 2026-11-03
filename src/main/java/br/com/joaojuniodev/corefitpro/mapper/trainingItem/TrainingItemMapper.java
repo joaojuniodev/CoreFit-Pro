@@ -26,6 +26,13 @@ public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingIt
         this.trainingMapper = trainingMapper;
     }
 
+    private boolean isCompletedThisWeek(TrainingItem item) {
+        var monday = java.time.LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo"))
+            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        return Boolean.TRUE.equals(item.getCompleted()) && item.getDateTime() != null &&
+            !item.getDateTime().toLocalDate().isBefore(monday);
+    }
+
     @Override
     public TrainingItem toEntity(TrainingItemRequestDTO request) {
         var training = trainingRepository.findById(request.trainingId())
@@ -47,7 +54,7 @@ public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingIt
         return new TrainingItemResponseDTO(
             entity.getId(),
             entity.getDayOfWeek(),
-            entity.getCompleted(),
+            isCompletedThisWeek(entity),
             trainingMapper.toResponse(entity.getTraining())
         );
     }

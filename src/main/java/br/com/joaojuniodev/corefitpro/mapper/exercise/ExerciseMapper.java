@@ -41,6 +41,12 @@ public class ExerciseMapper implements ObjectMapper<Exercise, ExerciseResponseDT
         return exercise;
     }
 
+    private String mediaUrl(String key) {
+        if (key == null || key.isBlank()) return null;
+        if (key.startsWith("https://") || key.startsWith("http://")) return key;
+        return b2Storage.getTemporaryUrl(key, Duration.ofHours(1));
+    }
+
     @Override
     public ExerciseResponseDTO toResponse(Exercise entity) {
         return new ExerciseResponseDTO(
@@ -48,12 +54,8 @@ public class ExerciseMapper implements ObjectMapper<Exercise, ExerciseResponseDT
             entity.getName(),
             entity.getSystem(),
             entity.getFavorite(),
-            entity.getPhotoKey() != null
-                ? b2Storage.getTemporaryUrl(entity.getPhotoKey(), Duration.ofHours(1))
-                : null,
-            entity.getVideoKey() != null
-                ? b2Storage.getTemporaryUrl(entity.getVideoKey(), Duration.ofHours(1))
-                : null,
+            mediaUrl(entity.getPhotoKey()),
+            mediaUrl(entity.getVideoKey()),
             entity.getPhotoFileId(),
             entity.getVideoFileId(),
             entity.getMuscleGroups().stream().map(muscleGroupMapper::toResponse).toList()

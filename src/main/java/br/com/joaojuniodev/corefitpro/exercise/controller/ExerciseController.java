@@ -52,8 +52,7 @@ public class ExerciseController {
         @RequestPart(name = "exercise") String exerciseJson,
         @RequestPart(value = "file", required = false) MultipartFile file
     ) throws JsonProcessingException {
-        ExerciseRequestDTO exercise =
-            objectMapper.readValue(exerciseJson, ExerciseRequestDTO.class);
+        ExerciseRequestDTO exercise = objectMapper.readValue(exerciseJson, ExerciseRequestDTO.class);
         return ResponseEntity.ok().body(exerciseService.create(exercise, file));
     }
 
@@ -62,8 +61,7 @@ public class ExerciseController {
         @RequestPart(name = "exercise") String exerciseJson,
         @RequestPart(value = "file", required = false) MultipartFile file
     ) throws JsonProcessingException {
-        ExerciseRequestDTO exercise =
-            objectMapper.readValue(exerciseJson, ExerciseRequestDTO.class);
+        ExerciseRequestDTO exercise = objectMapper.readValue(exerciseJson, ExerciseRequestDTO.class);
         return ResponseEntity.ok().body(exerciseService.update(exercise, file));
     }
 

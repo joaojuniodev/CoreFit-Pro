@@ -21,6 +21,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         FROM TrainingItem ti
         WHERE ti.dayOfWeek = :dayOfWeek
           AND ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
     """)
     Long countByDayOfWeekAndPersonalTrainerId(
         @Param("dayOfWeek") DaysOfWeek dayOfWeek,
@@ -33,6 +34,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         WHERE ti.dayOfWeek = :dayOfWeek
           AND ti.completed = false
           AND ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
     """)
     Long countPendingByDayOfWeekAndPersonalTrainerId(
         @Param("dayOfWeek") DaysOfWeek dayOfWeek,
@@ -45,6 +47,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         WHERE ti.dayOfWeek = :dayOfWeek
           AND ti.completed = true
           AND ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
     """)
     Long countCompletedByDayOfWeekAndPersonalTrainerId(
         @Param("dayOfWeek") DaysOfWeek dayOfWeek,
@@ -55,20 +58,32 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         SELECT COUNT(DISTINCT ti.trainingPlain.trainee.id)
         FROM TrainingItem ti
         WHERE ti.training.id = :trainingId
+          AND ti.trainingPlain.active = true
     """)
     Long countTraineesUseThisTraining(UUID trainingId);
 
     @EntityGraph(attributePaths = {
+        "training",
         "training.exerciseItems",
         "training.exerciseItems.exercise",
+        "training.exerciseItems.exercise.muscleGroups",
         "training.muscleGroups",
     })
     @Query("""
         SELECT ti
         FROM TrainingItem ti
         WHERE ti.trainingPlain.trainee.id = :traineeId
+          AND ti.trainingPlain.active = true
     """)
     List<TrainingItem> findByTrainee(@Param("traineeId") UUID traineeId);
+
+    @EntityGraph(attributePaths = {
+        "training",
+        "training.exerciseItems",
+        "training.exerciseItems.exercise",
+        "training.muscleGroups",
+    })
+    List<TrainingItem> findAllByTrainingPlainId(UUID trainingPlainId);
 
     @EntityGraph(attributePaths = {
         "training.exerciseItems",
@@ -79,6 +94,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         FROM TrainingItem ti
         WHERE ti.dayOfWeek = :dayOfWeek
           AND ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
     """)
     List<TrainingItem> findByDayOfWeekAndPersonalTrainerId(
         @Param("dayOfWeek") DaysOfWeek dayOfWeek,
@@ -97,6 +113,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         FROM TrainingItem ti
         WHERE ti.completed = false
           AND ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
         GROUP BY
             ti.trainingPlain.trainee.id,
             ti.trainingPlain.trainee.firstName,
@@ -118,6 +135,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
             ) AS completedTrainings
         FROM TrainingItem ti
         WHERE ti.trainingPlain.personalTrainer.id = :personalTrainerId
+          AND ti.trainingPlain.active = true
         GROUP BY ti.dayOfWeek
         ORDER BY ti.dayOfWeek
     """)

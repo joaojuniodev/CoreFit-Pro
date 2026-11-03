@@ -15,8 +15,6 @@ public class B2Config {
 
     @Bean(destroyMethod = "close")
     public B2StorageClient b2StorageClient(B2Properties props) {
-        System.out.println("B2 Key ID: " + props.getKeyId());
-        System.out.println("B2 Application Key: " + props.getApplicationKey());
         return B2StorageClientFactory
             .createDefaultFactory()
             .create(props.getKeyId(), props.getApplicationKey(), props.getUserAgent());

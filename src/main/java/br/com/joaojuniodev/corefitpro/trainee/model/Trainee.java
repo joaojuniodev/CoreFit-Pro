@@ -26,7 +26,10 @@ public class Trainee {
     private String lastName;
 
     @Column
-    private String avatarUrl;
+    private String avatarKey;
+
+    @Column
+    private String avatarFileId;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -65,12 +68,20 @@ public class Trainee {
         this.lastName = lastName;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public String getAvatarKey() {
+        return avatarKey;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setAvatarKey(String avatarKey) {
+        this.avatarKey = avatarKey;
+    }
+
+    public String getAvatarFileId() {
+        return avatarFileId;
+    }
+
+    public void setAvatarFileId(String avatarFileId) {
+        this.avatarFileId = avatarFileId;
     }
 
     public User getUser() {
