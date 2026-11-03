@@ -49,6 +49,10 @@ public class UserService implements UserDetailsService {
             credentials.getPassword() == null || credentials.getPassword().isBlank()) {
             throw new IllegalArgumentException("Informe usuário e senha para cadastrar o aluno.");
         }
+        if (credentials.getPassword().length() < 6 || credentials.getPassword().length() > 128) {
+            throw new IllegalArgumentException("A senha deve ter entre 6 e 128 caracteres.");
+        }
+        credentials.setUsername(credentials.getUsername().trim());
         if (repository.findByUserName(credentials.getUsername()) != null) {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, "Este usuário já está cadastrado. Escolha outro usuário.");
         }
