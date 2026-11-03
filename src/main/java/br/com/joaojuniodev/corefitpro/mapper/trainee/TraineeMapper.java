@@ -21,8 +21,7 @@ import br.com.joaojuniodev.corefitpro.trainingItem.repository.TrainingItemReposi
 import br.com.joaojuniodev.corefitpro.trainingPlain.repository.TrainingPlainRepository;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import br.com.joaojuniodev.corefitpro.trainingItem.util.WorkoutProgress;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -85,16 +84,10 @@ public class TraineeMapper implements ObjectMapper<Trainee, TraineeResponseDTO, 
         long totalTrainings = trainingsOfWeekly.size();
 
         long completedTrainings = trainingsOfWeekly.stream()
-            .filter(this::isCompletedThisWeek)
+            .filter(WorkoutProgress::isCompletedThisWeek)
             .count();
 
-        double progress = totalTrainings > 0
-            ? (completedTrainings * 100.0) / totalTrainings
-            : 0.0;
-
-        progress = BigDecimal.valueOf(progress)
-            .setScale(2, RoundingMode.HALF_UP)
-            .doubleValue();
+        double progress = WorkoutProgress.percentage(completedTrainings, totalTrainings);
 
         return new TraineeResponseDTO(
             entity.getId(),
@@ -116,7 +109,7 @@ public class TraineeMapper implements ObjectMapper<Trainee, TraineeResponseDTO, 
 
         var totalTrainings = trainingsOfWeekly.stream().count();
         var completedTrainings = trainingsOfWeekly.stream()
-            .filter(this::isCompletedThisWeek)
+            .filter(WorkoutProgress::isCompletedThisWeek)
             .count();
 
         return new TraineeDetailsDTO(
@@ -135,7 +128,7 @@ public class TraineeMapper implements ObjectMapper<Trainee, TraineeResponseDTO, 
             .collect(Collectors.toMap(TrainingItem::getDayOfWeek, Function.identity(), (first, duplicate) -> first));
 
         LocalDate monday = LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo")).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(WorkoutProgress.ZONE);
 
         List<TraineeWeeklyTraining> weeklySchedule = new ArrayList<>();
 
@@ -149,7 +142,7 @@ public class TraineeMapper implements ObjectMapper<Trainee, TraineeResponseDTO, 
                 continue;
             }
 
-            TrainingStatus status = isCompletedThisWeek(item)
+            TrainingStatus status = WorkoutProgress.isCompletedThisWeek(item)
                 ? TrainingStatus.COMPLETED
                 : TrainingStatus.PENDING;
 
@@ -162,12 +155,6 @@ public class TraineeMapper implements ObjectMapper<Trainee, TraineeResponseDTO, 
         }
 
         return weeklySchedule;
-    }
-
-    private boolean isCompletedThisWeek(TrainingItem item) {
-        var monday = LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo")).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        return Boolean.TRUE.equals(item.getCompleted()) && item.getDateTime() != null &&
-            !item.getDateTime().toLocalDate().isBefore(monday);
     }
 
     public TraineeSummaryDTO toSummary(Trainee entity) {

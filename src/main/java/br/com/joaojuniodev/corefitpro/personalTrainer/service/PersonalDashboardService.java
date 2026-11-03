@@ -15,6 +15,8 @@ import br.com.joaojuniodev.corefitpro.trainingPlain.repository.TrainingPlainRepo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import br.com.joaojuniodev.corefitpro.trainingItem.util.WorkoutProgress;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional(readOnly = true)
 public class PersonalDashboardService {
     private static final Logger logger = LoggerFactory.getLogger(PersonalDashboardService.class.getName());
 
@@ -40,22 +43,20 @@ public class PersonalDashboardService {
     }
 
     public DashboardResponseDTO getDashboard(UUID id) {
-        var today = LocalDate.now().getDayOfWeek();
+        var today = LocalDate.now(WorkoutProgress.ZONE).getDayOfWeek();
         var day = DaysOfWeek.valueOf(today.name());
-
-        long totalTrainingsOfToday = trainingItemRepository.countByDayOfWeekAndPersonalTrainerId(day, id);
 
         var activeTrainees = traineeRepository.countByUserEnabledTrueAndPersonalTrainerId(id);
         var activePlans = trainingPlainRepository.countByActiveTrueAndPersonalTrainerId(id);
-        var pendings = trainingItemRepository.countPendingByDayOfWeekAndPersonalTrainerId(day, id);
-        var workoutsCompletedToday = trainingItemRepository.countCompletedByDayOfWeekAndPersonalTrainerId(day, id);
-        var percentageWorkoutsCompletedToday = workoutsCompletedToday == 0
-            ? 0.0
-            : (double) (workoutsCompletedToday * 100) / totalTrainingsOfToday;
         var todayTrainings = trainingItemRepository.findByDayOfWeekAndPersonalTrainerId(day, id)
             .stream()
             .map(trainingItemMapper::toSummary)
             .toList();
+        long totalTrainingsOfToday = todayTrainings.size();
+        long workoutsCompletedToday = todayTrainings.stream()
+            .filter(item -> Boolean.TRUE.equals(item.completed())).count();
+        long pendings = totalTrainingsOfToday - workoutsCompletedToday;
+        double percentageWorkoutsCompletedToday = WorkoutProgress.percentage(workoutsCompletedToday, totalTrainingsOfToday);
         var necessaryAttention = getAttentions(id);
         var rhythmWeekly = getWeeklyRhythm(id);
         var recentActivities = recentActivityService.getAll(id);
@@ -95,7 +96,8 @@ public class PersonalDashboardService {
     }
 
     private List<WeeklyRhythmCompletedWorkoutsResponseDTO> getWeeklyRhythm(UUID personalTrainerId) {
-        List<WeeklyRhythmProjection> results = trainingItemRepository.findWeeklyRhythm(personalTrainerId);
+        List<WeeklyRhythmProjection> results = trainingItemRepository.findWeeklyRhythm(personalTrainerId,
+            WorkoutProgress.weekStart().atStartOfDay(), WorkoutProgress.weekStart().plusWeeks(1).atStartOfDay());
 
         return Arrays.stream(DaysOfWeek.values())
             .map(day -> {

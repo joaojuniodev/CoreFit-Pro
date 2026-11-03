@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,7 +130,7 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
             COUNT(ti.id) AS totalTrainings,
             SUM(
                 CASE
-                    WHEN ti.completed = true THEN 1
+                    WHEN ti.completed = true AND ti.dateTime >= :weekStart AND ti.dateTime < :weekEnd THEN 1
                     ELSE 0
                 END
             ) AS completedTrainings
@@ -140,6 +141,8 @@ public interface TrainingItemRepository extends JpaRepository<TrainingItem, UUID
         ORDER BY ti.dayOfWeek
     """)
     List<WeeklyRhythmProjection> findWeeklyRhythm(
-        @Param("personalTrainerId") UUID personalTrainerId
+        @Param("personalTrainerId") UUID personalTrainerId,
+        @Param("weekStart") LocalDateTime weekStart,
+        @Param("weekEnd") LocalDateTime weekEnd
     );
 }

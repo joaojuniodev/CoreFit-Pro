@@ -12,6 +12,7 @@ import br.com.joaojuniodev.corefitpro.trainingItem.dto.response.TrainingItemSumm
 import br.com.joaojuniodev.corefitpro.trainingItem.model.TrainingItem;
 import br.com.joaojuniodev.corefitpro.trainingPlain.repository.TrainingPlainRepository;
 import org.springframework.stereotype.Component;
+import br.com.joaojuniodev.corefitpro.trainingItem.util.WorkoutProgress;
 
 @Component
 public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingItemResponseDTO, TrainingItemRequestDTO> {
@@ -24,13 +25,6 @@ public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingIt
         this.trainingRepository = trainingRepository;
         this.trainingPlainRepository = trainingPlainRepository;
         this.trainingMapper = trainingMapper;
-    }
-
-    private boolean isCompletedThisWeek(TrainingItem item) {
-        var monday = java.time.LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo"))
-            .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
-        return Boolean.TRUE.equals(item.getCompleted()) && item.getDateTime() != null &&
-            !item.getDateTime().toLocalDate().isBefore(monday);
     }
 
     @Override
@@ -54,7 +48,7 @@ public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingIt
         return new TrainingItemResponseDTO(
             entity.getId(),
             entity.getDayOfWeek(),
-            isCompletedThisWeek(entity),
+            WorkoutProgress.isCompletedThisWeek(entity),
             trainingMapper.toResponse(entity.getTraining())
         );
     }
@@ -72,7 +66,7 @@ public class TrainingItemMapper implements ObjectMapper<TrainingItem, TrainingIt
         return new TrainingItemSummaryDTO(
             entity.getId(),
             entity.getDayOfWeek(),
-            entity.getCompleted(),
+            WorkoutProgress.isCompletedThisWeek(entity),
             trainingMapper.toSummary(entity.getTraining()),
             traineeSummary
         );
