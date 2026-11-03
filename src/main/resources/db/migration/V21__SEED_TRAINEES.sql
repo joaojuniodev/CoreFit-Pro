@@ -1,4 +1,4 @@
-ç-- 16 alunos de teste (username/password iguais ao primeiro nome, em minúsculas),
+-- 16 alunos de teste (username/password iguais ao primeiro nome, em minúsculas),
 -- distribuídos entre os 4 personal trainers: Lucas(5), Fernanda(3), Rafael(7), Patrícia(1).
 -- avatar_url fica NULL propositalmente em alguns (Bruno e Renata) para simular
 -- o caso de aluno sem foto cadastrada (o front-end deve exibir um avatar padrão).
